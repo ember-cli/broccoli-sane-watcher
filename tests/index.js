@@ -1,5 +1,5 @@
 var fs = require('fs');
-var broccoli = require('broccoli');
+var broccoli = require('ember-cli-broccoli');
 var rimraf = require('rimraf');
 var assert = require("assert");
 var Watcher = require('..');
