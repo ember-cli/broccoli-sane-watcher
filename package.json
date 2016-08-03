@@ -4,7 +4,8 @@
   "description": "Alternative watcher that uses sane module instead of polling",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests/"
+    "test": "mocha tests",
+    "test:debug": "mocha --no-timeout debug tests"
   },
   "repository": {
     "type": "git",
@@ -24,11 +25,13 @@
   "dependencies": {
     "broccoli-slow-trees": "^3.0.0",
     "debug": "^2.1.0",
-    "heimdalljs": "^0.1.2",
+    "heimdalljs": "^0.1.3",
     "rsvp": "^3.0.18",
     "sane": "^1.1.1"
   },
   "devDependencies": {
+    "chai": "^3.2.0",
+    "chai-as-promised": "^5.1.0",
     "ember-cli-broccoli": "^0.17.0",
     "mocha": "^2.0.1",
     "rimraf": "^2.2.8"

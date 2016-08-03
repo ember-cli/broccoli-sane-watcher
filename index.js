@@ -58,10 +58,22 @@ Watcher.prototype.build = function Watcher_build(filePath) {
   var addWatchDir = this.addWatchDir.bind(this);
   var triggerChange = this.triggerChange.bind(this);
   var triggerError = this.triggerError.bind(this);
+  var heimdallNode;
 
   function verboseOutput(run) {
     if (this.options.verbose) {
       printSlowTrees(run.graph.__heimdall__);
+    }
+
+    return run;
+  }
+
+  function cleanup(run) {
+    // guard against `build` rejecting
+    if (heimdallNode) {
+      // remove the heimdall subtree for this build so we don't leak.  If
+      // BROCCOLI_VIZ=1 then we have already output the json in `verboseOutput`.
+      heimdallNode.remove();
     }
 
     return run;
@@ -80,12 +92,20 @@ Watcher.prototype.build = function Watcher_build(filePath) {
     return hash;
   }
 
+  function saveNode(hash) {
+    heimdallNode = hash.graph.__heimdall__;
+
+    return hash;
+  }
+
   return this.builder
     .build(addWatchDir)
+    .then(saveNode)
     .then(totalTime)
     .then(appendFilePath)
     .then(triggerChange, triggerError)
-    .then(verboseOutput.bind(this));
+    .then(verboseOutput.bind(this))
+    .finally(cleanup);
 };
 
 function sum(node, cb) {
@@ -133,7 +153,7 @@ Watcher.prototype.onFileDeleted = makeOnChanged('file deleted');
 
 Watcher.prototype.onError = function(error) {
   this.emit('error', error);
-}
+};
 
 Watcher.prototype.triggerChange = function (hash) {
   debug('triggerChange');
