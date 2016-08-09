@@ -4,7 +4,7 @@ var EventEmitter   = require('events').EventEmitter;
 var sane           = require('sane');
 var Promise        = require('rsvp').Promise;
 var printSlowTrees = require('broccoli-slow-trees');
-var debug          = require('debug')('broccoli-sane-watcher');
+var logger         = require('heimdalljs-logger')('broccoli-sane-watcher');
 var heimdall       = require('heimdalljs');
 
 function defaultFilterFunction(name) {
@@ -14,7 +14,7 @@ function defaultFilterFunction(name) {
 module.exports = Watcher;
 
 function Watcher(builder, options) {
-  debug('initialize: %o', options);
+  logger.info('initialize: %o', options);
   this.builder = builder;
   this.options = options || {};
   this.options.filter = this.options.filter || defaultFilterFunction;
@@ -28,11 +28,11 @@ Watcher.prototype = Object.create(EventEmitter.prototype);
 // gathers rapid changes as one build
 Watcher.prototype.scheduleBuild = function (filePath) {
   if (this.timeout) {
-    debug('debounce scheduleBuild: %s', filePath);
+    logger.info('debounce scheduleBuild: %s', filePath);
     return;
   }
 
-  debug('scheduleBuild: %s', filePath);
+  logger.info('scheduleBuild: %s', filePath);
 
   // we want the timeout to start now before we wait for the current build
   var timeout = new Promise(function (resolve) {
@@ -54,7 +54,7 @@ Watcher.prototype.scheduleBuild = function (filePath) {
 };
 
 Watcher.prototype.build = function Watcher_build(filePath) {
-  debug('build: %s', filePath);
+  logger.info('build: %s', filePath);
   var addWatchDir = this.addWatchDir.bind(this);
   var triggerChange = this.triggerChange.bind(this);
   var triggerError = this.triggerError.bind(this);
@@ -118,11 +118,11 @@ function sum(node, cb) {
 
 Watcher.prototype.addWatchDir = function Watcher_addWatchDir(dir) {
   if (this.watched[dir]) {
-    debug('addWatchDir: (not added duplicate) %s', dir);
+    logger.info('addWatchDir: (not added duplicate) %s', dir);
     return;
   }
 
-  debug('addWatchDir: %s', dir);
+  logger.info('addWatchDir: %s', dir);
 
   if (!fs.existsSync(dir)) {
     throw new Error('Attempting to watch missing directory: ' + dir);
@@ -156,19 +156,19 @@ Watcher.prototype.onError = function(error) {
 };
 
 Watcher.prototype.triggerChange = function (hash) {
-  debug('triggerChange');
+  logger.info('triggerChange');
   this.emit('change', hash);
   return hash;
 };
 
 Watcher.prototype.triggerError = function (error) {
-  debug('triggerError %o', error);
+  logger.info('triggerError %o', error);
   this.emit('error', error);
   throw error;
 };
 
 Watcher.prototype.close = function () {
-  debug('close');
+  logger.info('close');
   clearTimeout(this.timeout);
   var watched = this.watched;
   for (var dir in watched) {
