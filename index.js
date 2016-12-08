@@ -20,6 +20,7 @@ function Watcher(builder, options) {
   this.options.filter = this.options.filter || defaultFilterFunction;
   this.watched = Object.create(null);
   this.timeout = null;
+  this.changedFiles = [];
   this.sequence = this.build();
 }
 
@@ -27,6 +28,7 @@ Watcher.prototype = Object.create(EventEmitter.prototype);
 
 // gathers rapid changes as one build
 Watcher.prototype.scheduleBuild = function (filePath) {
+  this.changedFiles.push(filePath);
   if (this.timeout) {
     logger.info('debounce scheduleBuild: %s', filePath);
     return;
@@ -98,8 +100,20 @@ Watcher.prototype.build = function Watcher_build(filePath) {
     return hash;
   }
 
+  var changedFiles = this.changedFiles;
+  this.changedFiles = [];
+
+  var annotation = {
+    type: !!filePath ? 'rebuild' : 'initial',
+    reason: 'watcher',
+    primaryFile: filePath,
+    changedFiles: changedFiles,
+  };
+
+  logger.info('%o', annotation);
+
   return this.builder
-    .build(addWatchDir)
+    .build(addWatchDir, annotation)
     .then(saveNode)
     .then(totalTime)
     .then(appendFilePath)
@@ -182,3 +196,4 @@ Watcher.prototype.close = function () {
 Watcher.prototype.then = function(success, fail) {
   return this.sequence.then(success, fail);
 };
+;
