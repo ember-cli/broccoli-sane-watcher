@@ -1,4 +1,5 @@
 var fs = require('fs');
+var path = require('path');
 var broccoli = require('ember-cli-broccoli');
 var rimraf = require('rimraf');
 var chai = require('chai'), expect = chai.expect;
@@ -198,6 +199,63 @@ describe('broccoli-sane-watcher', function () {
     }, defer));
 
     watcher.on('error', errorHandler(defer));
+
+    return defer.promise;
+  });
+
+  it('calls `build` with an annotation explaining why a build is occurring', function() {
+    var defer = RSVP.defer();
+
+    fs.mkdirSync('tests/fixtures/a');
+    var filter = new TestFilter(['tests/fixtures/a'], function () {
+      return 'output';
+    });
+
+    var buildArgs = null;
+    var builder = new broccoli.Builder(filter);
+    builder.build = (function (originalBuild) {
+      return function () {
+        buildArgs = Array.prototype.slice.call(arguments);
+        return originalBuild.apply(builder, buildArgs);
+      }
+    })(builder.build);
+    watcher = new Watcher(builder);
+
+    watcher.on('error', errorHandler(defer));
+
+    var builds = 0;
+
+    watcher.on('change', eventHandler(function () {
+      var build = ++builds;
+      if (build === 1) {
+        fs.writeFileSync('tests/fixtures/a/foo.js');
+        fs.writeFileSync('tests/fixtures/a/bar.js');
+        fs.writeFileSync('tests/fixtures/a/baz.js');
+        fs.mkdirSync('tests/fixtures/a/ohai');
+        fs.writeFileSync('tests/fixtures/a/ohai/foo.js');
+      } else {
+        expect(buildArgs.length).to.eql(2);
+        var annotation = buildArgs[1];
+        var expectedChangedFiles = [
+          path.join(__dirname, 'fixtures/a/bar.js'),
+          path.join(__dirname, 'fixtures/a/baz.js'),
+          path.join(__dirname, 'fixtures/a/foo.js'),
+          path.join(__dirname, 'fixtures/a/ohai'),
+          path.join(__dirname, 'fixtures/a/ohai/foo.js'),
+        ];
+
+        expect(annotation.reason).to.eql('watcher');
+        expect(annotation.type).to.eql('rebuild');
+        // These are a bit fuzzy because there's a race and will vary from dev
+        // machines & CI &c.; but we expect at least 1 changed file and if we
+        // have more than each file twice we'd be very surprised.
+        expect(expectedChangedFiles).to.include.members(annotation.changedFiles);
+        expect(annotation.changedFiles.length).to.be.within(1, 10);
+        expect(expectedChangedFiles).to.include(annotation.primaryFile);
+
+        defer.resolve();
+      }
+    }, defer));
 
     return defer.promise;
   });
