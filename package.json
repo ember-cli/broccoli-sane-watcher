@@ -1,6 +1,6 @@
 {
   "name": "ember-cli-broccoli-sane-watcher",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "Alternative watcher that uses sane module instead of polling",
   "main": "index.js",
   "scripts": {
