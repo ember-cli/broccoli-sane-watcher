@@ -1,5 +1,17 @@
 # Changelog
 
+## v3.0.0 (2018-10-13)
+
+#### :boom: Breaking Change
+* Drop support for Node 4 and below
+
+#### :bug: Bug Fix
+* [#13](https://github.com/ember-cli/broccoli-sane-watcher/pull/13) package.json: Declare Node.js version compatibility ([@Turbo87](https://github.com/Turbo87))
+
+#### Committers: 1
+- Tobias Bieniek ([@Turbo87](https://github.com/Turbo87))
+
+
 ## v2.2.2 (2018-10-13)
 
 #### :bug: Bug Fix
