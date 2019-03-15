@@ -28,7 +28,7 @@
     "heimdalljs": "^0.2.1",
     "heimdalljs-logger": "^0.1.7",
     "rsvp": "^4.8.4",
-    "sane": "^4.0.3"
+    "sane": "^4.1.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
