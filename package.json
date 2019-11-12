@@ -36,7 +36,7 @@
     "ember-cli-broccoli": "^0.17.0",
     "lerna-changelog": "^0.8.3",
     "mocha": "^6.2.2",
-    "rimraf": "^2.7.0"
+    "rimraf": "^3.0.0"
   },
   "engines": {
     "node": "6.* || 8.* || >= 10.*"
