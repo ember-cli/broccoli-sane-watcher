@@ -35,7 +35,7 @@
     "chai-as-promised": "^7.1.1",
     "ember-cli-broccoli": "^0.17.0",
     "lerna-changelog": "^0.8.3",
-    "mocha": "^6.2.2",
+    "mocha": "^7.0.0",
     "rimraf": "^2.7.0"
   },
   "engines": {
