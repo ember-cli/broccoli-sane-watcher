@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/ember-cli/broccoli-sane-watcher",
   "dependencies": {
-    "broccoli-slow-trees": "^3.0.1",
+    "broccoli-slow-trees": "^3.1.0",
     "heimdalljs": "^0.2.1",
     "heimdalljs-logger": "^0.1.7",
     "rsvp": "^4.8.5",
