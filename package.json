@@ -31,7 +31,7 @@
     "sane": "^4.1.0"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
+    "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
     "ember-cli-broccoli": "^0.17.0",
     "lerna-changelog": "^0.8.3",
